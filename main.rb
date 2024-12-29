@@ -1,8 +1,6 @@
 require 'net/http'
 require 'json'
 require 'dotenv/load'
-require 'pp'
-require 'digest'
 require 'active_support/time'
 require 'uri'
 
