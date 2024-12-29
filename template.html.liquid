@@ -1,0 +1,52 @@
+<div class="layout">
+    <table class="table">
+        <thead>
+        <tr style="height: 80px">
+            <th><span class="title title--small"></span></th>
+            {% for date in header %}
+                <th><span class="title title--small" style="transform: rotate(290deg);
+              display: inline-block; white-space: nowrap;">{{ date | date: "%b %d" }}</span></th>
+            {% endfor %}
+            <th><span class="title title--small" style="transform: rotate(290deg);
+              display: inline-block; white-space: nowrap;">Streak</span></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for habit in habits %}
+            <tr style="height: 30px;">
+                <td><span class="label">{{ habit.name }}</span></td>
+                {% for status in habit.statuses %}
+                    <td>
+                      <span class="status">
+                        {% if status == "in_progress" %}
+                            <img width="20" height="20" src="https://img.icons8.com/android/24/hourglass.png"
+                                 alt="hourglass"/>
+                        {% elsif status == "completed" %}
+                            <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
+                                 alt="fire-element--v1"/>
+                        {% elsif status == "skipped" %}
+                            <img width="32" height="32"
+                                 src="https://img.icons8.com/external-jumpicon-glyph-ayub-irawan/32/1A1A1A/external-dot-basic-ui-jumpicon-glyph-jumpicon-glyph-ayub-irawan-2.png"
+                                 alt="external-dot-basic-ui-jumpicon-glyph-jumpicon-glyph-ayub-irawan-2"/>
+                        {% elsif status == "failed" %}
+                            <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/1A1A1A/delete-sign.png"
+                                 alt="delete-sign"/>
+                        {% else %}
+                            <img width="10" height="10" src="https://img.icons8.com/material-rounded/24/1A1A1A/full-stop.png"
+                                 alt="full-stop"/>
+                        {% endif %}
+                      </span>
+                    </td>
+                {% endfor %}
+                <td><span class="label label--inverted" style="width: 2em; font-weight: bold;">{{ habit.streak }}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="title_bar">
+    <span class="title">habitify.me (Unofficial)</span>
+    <span class="instance"></span>
+</div>
+
