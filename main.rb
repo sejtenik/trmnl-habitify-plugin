@@ -8,6 +8,10 @@ DAYS_COUNT = 7
 
 ###### methods #############
 
+def short_round(number)
+  number > 1 ? number.round : number.round(1)
+end
+
 #universal method for calling various habitify rest endpoints with simple caching
 def call_habitify(path, params, use_cache)
   uri = URI.join("https://api.habitify.me", path)
@@ -61,7 +65,7 @@ end
 #for the given habit_id finds statuses in range @start_date..@end_date
 # and counts current streak (event before @start_date)
 def get_habit_history_and_streak(habit_id, habit_start_date)
-  result = {:streak => 0}
+  result = {:streak => 0, :skipped => 0}
   on_streak = true
   current_date = @end_date
   is_for_today = true
@@ -88,7 +92,9 @@ def get_habit_history_and_streak(habit_id, habit_start_date)
     #streak counting algorithm
     if status == 'failed' or status == 'none'
       on_streak = false
-    elsif status == 'skipped' or (is_for_today and status == 'in_progress')
+    elsif status == 'skipped'
+      result[:skipped] += 1 if on_streak
+    elsif is_for_today and status == 'in_progress'
       #nop - don't break a streak, but also don't count ;)
       result[:streak] += 0
     elsif on_streak
@@ -98,6 +104,11 @@ def get_habit_history_and_streak(habit_id, habit_start_date)
     current_date = current_date.yesterday
   end
 
+  if result[:streak] > 0
+    result[:skipped_percentage] = short_round(result[:skipped] / result[:streak].to_f * 100)
+  else
+    result[:skipped_percentage] = 0
+  end
   #order statuses from oldest to newest
   result[:statuses] = statuses.values.reverse
 

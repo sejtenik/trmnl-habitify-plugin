@@ -9,6 +9,8 @@
             {% endfor %}
             <th><span class="title title--small" style="transform: rotate(290deg);
               display: inline-block; white-space: nowrap;">Streak</span></th>
+            <th><span class="title title--small" style="transform: rotate(290deg);
+              display: inline-block; white-space: nowrap;">Skips%</span></th>
         </tr>
         </thead>
 
@@ -26,9 +28,7 @@
                             <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
                                  alt="fire-element--v1"/>
                         {% elsif status == "skipped" %}
-                            <img width="32" height="32"
-                                 src="https://img.icons8.com/external-jumpicon-glyph-ayub-irawan/32/1A1A1A/external-dot-basic-ui-jumpicon-glyph-jumpicon-glyph-ayub-irawan-2.png"
-                                 alt="external-dot-basic-ui-jumpicon-glyph-jumpicon-glyph-ayub-irawan-2"/>
+                            <img width="32" height="32" src="https://img.icons8.com/ios/50/arrow--v1.png" alt="arrow--v1"/>
                         {% elsif status == "failed" %}
                             <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/1A1A1A/delete-sign.png"
                                  alt="delete-sign"/>
@@ -40,6 +40,7 @@
                     </td>
                 {% endfor %}
                 <td><span class="label label--inverted" style="width: 2em; font-weight: bold;">{{ habit.streak }}</span></td>
+                <td><span class="label label--outline" style="width: 2em; font-weight: bold;">{{ habit.skipped_percentage }}</span></td>
             </tr>
         {% endfor %}
         </tbody>
