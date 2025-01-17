@@ -114,6 +114,7 @@ def get_habits_data
   habits = []
 
   habits_response["data"].each do |habit_response|
+    next if habit_response["is_archived"]
     habit = {:name => habit_response["name"]}
     puts habit
     habit_start_date = Time.parse(habit_response["start_date"]).beginning_of_day
