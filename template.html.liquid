@@ -8,7 +8,7 @@
               display: inline-block; white-space: nowrap;">{{ date | l_date: "%b %d", trmnl.user.locale }}</span></th>
             {% endfor %}
             <th><span class="title title--small" style="transform: rotate(290deg);
-              display: inline-block; white-space: nowrap;">Streak</span></th>
+              display: inline-block; white-space: nowrap;"><b>Streak</b></span></th>
             <th><span class="label label--small" style="transform: rotate(290deg);
               display: inline-block; white-space: nowrap;">Skips%</span></th>
         </tr>
@@ -16,24 +16,31 @@
 
         <tbody>
         {% for habit in habits %}
-            <tr style="height: 30px;">
+            <tr style="height:30px;">
                 <td><span class="label">{{ habit.name }}</span></td>
                 {% for status in habit.statuses %}
-                    <td>
-                      <span class="status">
+                    <td style="text-align: center; vertical-align: middle;">
+                      <span class="status" style="display: inline-block;">
                         {% if status == "in_progress" %}
-                            <img width="20" height="20" src="https://img.icons8.com/android/24/hourglass.png"
+                            <img style="padding-top: 3px;"
+                                 width="30" height="30"
+                                 src="https://img.icons8.com/ios-glyphs/30/hourglass--v1.png"
                                  alt="hourglass"/>
                         {% elsif status == "completed" %}
-                            <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
+                            <img width="30" height="30"
+                                 src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
                                  alt="fire-element--v1"/>
                         {% elsif status == "skipped" %}
-                            <img width="32" height="32" src="https://img.icons8.com/ios/50/arrow--v1.png" alt="arrow--v1"/>
+                            <img width="30" height="30"
+                                 src="https://img.icons8.com/ios-glyphs/30/arrow.png"
+                                 alt="arrow--v1"/>
                         {% elsif status == "failed" %}
-                            <img width="30" height="30" src="https://img.icons8.com/ios-glyphs/30/1A1A1A/delete-sign.png"
+                            <img width="30" height="30"
+                                 src="https://img.icons8.com/ios-glyphs/30/1A1A1A/delete-sign.png"
                                  alt="delete-sign"/>
                         {% else %}
-                            <img width="10" height="10" src="https://img.icons8.com/material-rounded/24/1A1A1A/full-stop.png"
+                            <img width="10" height="10"
+                                 src="https://img.icons8.com/material-rounded/24/1A1A1A/full-stop.png"
                                  alt="full-stop"/>
                         {% endif %}
                       </span>
