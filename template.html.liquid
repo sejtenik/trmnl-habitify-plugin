@@ -5,11 +5,11 @@
             <th><span class="title title--small"></span></th>
             {% for date in header %}
                 <th><span class="title title--small" style="transform: rotate(290deg);
-              display: inline-block; white-space: nowrap;">{{ date | date: "%b %d" }}</span></th>
+              display: inline-block; white-space: nowrap;">{{ date | l_date: "%b %d", trmnl.user.locale }}</span></th>
             {% endfor %}
             <th><span class="title title--small" style="transform: rotate(290deg);
               display: inline-block; white-space: nowrap;">Streak</span></th>
-            <th><span class="title title--small" style="transform: rotate(290deg);
+            <th><span class="label label--small" style="transform: rotate(290deg);
               display: inline-block; white-space: nowrap;">Skips%</span></th>
         </tr>
         </thead>
@@ -39,8 +39,20 @@
                       </span>
                     </td>
                 {% endfor %}
-                <td><span class="label label--inverted" style="width: 2em; font-weight: bold;">{{ habit.streak }}</span></td>
-                <td><span class="label label--outline" style="width: 2em; font-weight: bold;">{{ habit.skipped_percentage }}</span></td>
+                <td style="line-height: 1;">
+                  <span class="label label--inverted"
+                        style="display: inline-block;
+                               padding-top: 5px;
+                               margin-left: 10px;
+                               font-weight: bold;">
+                    {{ habit.streak }}
+                  </span></td>
+                <td style="vertical-align: middle;">
+                  <span class="label label--small"
+                        style="display: inline;
+                        padding-left: 10px;">
+                    {{ habit.skipped_percentage }}%
+                  </span></td>
             </tr>
         {% endfor %}
         </tbody>
