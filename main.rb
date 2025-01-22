@@ -9,6 +9,10 @@ DAYS_COUNT = 7
 ###### methods #############
 
 def short_round(number)
+  if number == 0
+    return 0;
+  end
+
   number > 1 ? number.round : number.round(1)
 end
 
@@ -134,6 +138,8 @@ def get_habits_data
     habit.merge! habit_history
     habits.append habit
   end
+
+  habits.sort_by! {|habit| habit[:streak] }
 
   #pupulate table header
   header = []
