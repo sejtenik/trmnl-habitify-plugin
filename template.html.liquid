@@ -3,9 +3,23 @@
         <thead>
         <tr style="height: 80px">
             <th><span class="title title--small"></span></th>
+            {%comment%}
+              TODO replace with: date | l_date: "%b %d", trmnl.user.locale
+              There is no pl_PL locale yet.
+            {%endcomment%}
+
+            {% assign month_names = "sty, lut, mar, kwi, maj, cze, lip, sie, wrz, paź, lis, gru" | split: ", " %}
+
             {% for date in header %}
+                {% assign date_month = date | date: "%m" | minus :1 %}
+                {% assign month = month_names[date_month] %}
+                {% assign day = date | date: "%d" %}
+
+                {% assign day_of_week = date | date: "%A" %}
                 <th><span class="title title--small" style="transform: rotate(290deg);
-              display: inline-block; white-space: nowrap;">{{ date | l_date: "%b %d", trmnl.user.locale }}</span></th>
+                            display: inline-block; white-space: nowrap
+                    {% if day_of_week == "Sunday" %} ;text-decoration: underline; {% endif %}
+                            "> {{day}} {{ month }}</span></th>
             {% endfor %}
             <th><span class="title title--small" style="transform: rotate(290deg);
               display: inline-block; white-space: nowrap;"><b>Streak</b></span></th>
