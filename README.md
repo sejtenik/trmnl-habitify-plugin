@@ -49,3 +49,7 @@ Please note that "Habitify" and related trademarks are the property of their res
 - https://docs.usetrmnl.com/go/private-plugins/create-a-screen
 - https://docs.habitify.me/
 - https://www.habitify.me/
+- https://github.com/eindpunt/awesome-TRMNL
+
+### Check out my other private TRMNL plugins.
+- https://github.com/sejtenik?tab=repositories&q=trmnl-
