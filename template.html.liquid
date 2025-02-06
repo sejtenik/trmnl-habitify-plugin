@@ -46,10 +46,15 @@
                                 {% assign circumference = 88 %}
                                 {% assign black_length = status.progress | times: circumference | divided_by: 100 %}
                                 {% assign gray_length = circumference | minus: black_length %}
-                                    <svg width="30" height="30" viewBox="0 0 36 36">
+                                <svg width="30" height="30" viewBox="0 0 36 36">
                                          <defs>
                                           <pattern id="squared" patternUnits="userSpaceOnUse" width="3" height="3">
-                                            <rect x="0" y="0" width="2" height="2" fill="black"/>
+
+                                            <image href="https://usetrmnl.com/images/grayscale/gray-5.png"
+                                                   x="0" y="0" width="12" height="12"
+                                                   preserveAspectRatio="xMidYMid slice"/>
+
+
                                           </pattern>
                                          </defs>
 
