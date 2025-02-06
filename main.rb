@@ -66,6 +66,18 @@ def cache_file_path(url)
   File.join(cache_dir, "#{file_name}.json")
 end
 
+def get_progress(habit_status_response)
+  progress = habit_status_response["data"]["progress"]
+  return -1 if progress.nil? || progress["periodicity"] != 'daily'
+
+  current_progress = progress["current_value"]
+  target_progress = progress["target_value"]
+
+  return -1 if target_progress.nil? || target_progress == 0
+
+  (current_progress.to_f / target_progress.to_f * 100).round(1)
+end
+
 #for the given habit_id finds statuses in range @start_date..@end_date
 # and counts current streak (event before @start_date)
 def get_habit_history_and_streak(habit_id, habit_start_date)
@@ -84,13 +96,14 @@ def get_habit_history_and_streak(habit_id, habit_start_date)
     if current_date >= habit_start_date
       habit_status_response = call_habitify("/status/#{habit_id}", { target_date: current_date.iso8601}, !is_for_today)
       status = habit_status_response["data"]["status"]
+      progress = get_progress(habit_status_response)
     else
       status = 'none'
     end
 
     #don't store more statuses than needed
     if current_date >= @start_date
-      statuses[current_date.strftime("%Y-%m-%d")] = status
+      statuses[current_date.strftime("%Y-%m-%d")] = {status: status, progress: progress}
     end
 
     #streak counting algorithm
