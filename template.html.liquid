@@ -29,43 +29,55 @@
         </thead>
 
         <tbody>
-
         {% for habit in habits %}
             <tr style="height:30px;">
-                <td><span class="label">{{ habit.name }}</span></td>
-                {% for status in habit.statuses %}
+                <td>
+                    <span class="label {% if habit.is_negative %}label--inverted{% endif %}">
+                  {{ habit.name }}
+                    </span>
+                </td>
+                {% for daily_status in habit.statuses %}
                     <td style="text-align: center; vertical-align: middle;">
                       <span class="status" style="display: inline-block;">
-                        {% if status.status == "in_progress" %}
-                            {% if status.progress == -1 %}
+                        {% if daily_status.status == "in_progress" %}
+                            {% if habit.is_negative or daily_status.progress == -1 %}
                                 <img style="padding-top: 3px;"
                                      width="30" height="30"
                                      src="https://img.icons8.com/ios-glyphs/30/hourglass--v1.png"
                                      alt="hourglass"/>
                             {% else %}
                                 {% assign circumference = 88 %}
-                                {% assign black_length = status.progress | times: circumference | divided_by: 100 %}
+                                {% assign black_length = daily_status.progress | times: circumference | divided_by: 100 %}
                                 {% assign gray_length = circumference | minus: black_length %}
                                 <svg width="30" height="30" viewBox="0 0 36 36">
-
-                                        <circle cx="18" cy="18" r="14" stroke="black"
-                                                stroke-width="1" fill="none"/>
-
-                                        <circle cx="18" cy="18" r="14" fill="none" stroke="black"
+                                        <circle cx="18" cy="18" r="14"
+                                                stroke="black"
+                                                stroke-width="1"
+                                                fill="none"/>
+                                        <circle cx="18" cy="18" r="14"
+                                                fill="none"
+                                                stroke="black"
                                                 stroke-width="8"
                                                 stroke-dasharray="{{ black_length }} {{ gray_length }}"
                                                 stroke-dashoffset="22"/>
                                     </svg>
                             {% endif %}
-                        {% elsif status.status == "completed" %}
-                            <img width="30" height="30"
-                                 src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
-                                 alt="fire-element--v1"/>
-                        {% elsif status.status == "skipped" %}
+                        {% elsif daily_status.status == "completed" %}
+
+                            {% if habit.is_negative and daily_status.value > 0 %}
+                                <img width="30" height="30"
+                                     src="https://img.icons8.com/ink/30/1A1A1A/exclamation-mark.png"
+                                     alt="exclamation-mark"/>
+                            {% else %}
+                                <img width="30" height="30"
+                                     src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
+                                     alt="fire-element--v1"/>
+                            {% endif %}
+                        {% elsif daily_status.status == "skipped" %}
                             <img width="30" height="30"
                                  src="https://img.icons8.com/ios-glyphs/30/arrow.png"
                                  alt="arrow--v1"/>
-                        {% elsif status.status == "failed" %}
+                        {% elsif daily_status.status == "failed" %}
                             <img width="30" height="30"
                                  src="https://img.icons8.com/ios-glyphs/30/1A1A1A/delete-sign.png"
                                  alt="delete-sign"/>
@@ -84,20 +96,22 @@
                                margin-left: 10px;
                                font-weight: bold;">
                     {{ habit.streak }}
-                  </span></td>
+                  </span>
+                </td>
                 <td style="vertical-align: middle;">
                   <span class="label label--small"
                         style="display: inline;
                         padding-left: 10px;">
                     {{ habit.skipped_percentage }}%
-                  </span></td>
+                  </span>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
 <div class="title_bar">
-    <span class="title">Habits</span>
+    <span class="title">habitify.me</span>
     <span class="instance"></span>
 </div>
 
