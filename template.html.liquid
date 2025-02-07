@@ -47,19 +47,9 @@
                                 {% assign black_length = status.progress | times: circumference | divided_by: 100 %}
                                 {% assign gray_length = circumference | minus: black_length %}
                                 <svg width="30" height="30" viewBox="0 0 36 36">
-                                         <defs>
-                                          <pattern id="squared" patternUnits="userSpaceOnUse" width="3" height="3">
 
-                                            <image href="https://usetrmnl.com/images/grayscale/gray-5.png"
-                                                   x="0" y="0" width="12" height="12"
-                                                   preserveAspectRatio="xMidYMid slice"/>
-
-
-                                          </pattern>
-                                         </defs>
-
-                                        <circle cx="18" cy="18" r="14" stroke="url(#squared)"
-                                                stroke-width="8" fill="none"/>
+                                        <circle cx="18" cy="18" r="14" stroke="black"
+                                                stroke-width="1" fill="none"/>
 
                                         <circle cx="18" cy="18" r="14" fill="none" stroke="black"
                                                 stroke-width="8"
