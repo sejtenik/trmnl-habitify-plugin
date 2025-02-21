@@ -29,7 +29,8 @@
         </thead>
 
         <tbody>
-        {% for habit in habits %}
+        {% assign habits_to_display = habits | slice: 0, 9 %}
+        {% for habit in habits_to_display %}
             <tr style="height:30px;">
                 <td>
                     <span class="label {% if habit.is_negative %}label--inverted{% endif %}">
