@@ -24,7 +24,7 @@ def call_habitify(path, params, use_cache)
   if use_cache
     cache_file = cache_file_path(uri)
 
-    if File.exist?(cache_file)
+    if File.exist?(cache_file) && Time.now - File.mtime(cache_file) > 24 * 60 * 60
       puts "Using cached response for #{uri} in #{cache_file}"
       return JSON.parse(File.read(cache_file))
     end
