@@ -1,3 +1,9 @@
+{% assign completed = "c" %}
+{% assign failed = "f" %}
+{% assign skipped = "s" %}
+{% assign in_progress = "p" %}
+{% assign none = "n" %}
+
 <div class="layout">
     <table class="table">
         <thead>
@@ -31,24 +37,35 @@
         <tbody>
         {% assign habits_to_display = habits | slice: 0, 9 %}
         {% for habit in habits_to_display %}
+           {% assign habit_statuses = habit.s %}
+           {% assign habit_is_negative = habit.v %}
+           {% assign habit_name = habit.n %}
+           {% assign habit_skipped_percentage = habit.sp %}
+           {% assign habit_skipped = habit.k %}
+           {% assign habit_streak = habit.t %}
+
+
             <tr style="height:30px;">
                 <td>
-                    <span class="label {% if habit.is_negative %}label--inverted{% endif %}">
-                  {{ habit.name }}
+                    <span class="label {% if habit_is_negative %}label--inverted{% endif %}">
+                  {{ habit_name }}
                     </span>
                 </td>
-                {% for daily_status in habit.statuses %}
+                {% for daily_status in habit_statuses %}
+                    {% assign daily_status_status = daily_status[0] %}
+                    {% assign daily_status_progress = daily_status[1] %}
+                    {% assign daily_status_value = daily_status[2] %}
                     <td style="text-align: center; vertical-align: middle;">
                       <span class="status" style="display: inline-block;">
-                        {% if daily_status.status == "in_progress" %}
-                            {% if habit.is_negative or daily_status.progress == -1 %}
+                        {% if daily_status_status == in_progress %}
+                            {% if habit_is_negative or daily_status_progress == -1 %}
                                 <img style="padding-top: 3px;"
                                      width="30" height="30"
                                      src="https://img.icons8.com/ios-glyphs/30/hourglass--v1.png"
                                      alt="hourglass"/>
                             {% else %}
                                 {% assign circumference = 88 %}
-                                {% assign black_length = daily_status.progress | times: circumference | divided_by: 100 %}
+                                {% assign black_length = daily_status_progress | times: circumference | divided_by: 100 %}
                                 {% assign gray_length = circumference | minus: black_length %}
                                 <svg width="30" height="30" viewBox="0 0 36 36">
                                         <circle cx="18" cy="18" r="14"
@@ -63,9 +80,9 @@
                                                 stroke-dashoffset="22"/>
                                     </svg>
                             {% endif %}
-                        {% elsif daily_status.status == "completed" %}
+                        {% elsif daily_status_status == completed %}
 
-                            {% if habit.is_negative and daily_status.value > 0 %}
+                            {% if habit_is_negative and daily_status_value > 0 %}
                                 <img width="30" height="30"
                                      src="https://img.icons8.com/ink/30/1A1A1A/exclamation-mark.png"
                                      alt="exclamation-mark"/>
@@ -74,11 +91,11 @@
                                      src="https://img.icons8.com/ios-glyphs/30/fire-element--v1.png"
                                      alt="fire-element--v1"/>
                             {% endif %}
-                        {% elsif daily_status.status == "skipped" %}
+                        {% elsif daily_status_status == skipped %}
                             <img width="30" height="30"
                                  src="https://img.icons8.com/ios-glyphs/30/arrow.png"
                                  alt="arrow--v1"/>
-                        {% elsif daily_status.status == "failed" %}
+                        {% elsif daily_status_status == failed %}
                             <img width="30" height="30"
                                  src="https://img.icons8.com/ios-glyphs/30/1A1A1A/delete-sign.png"
                                  alt="delete-sign"/>
@@ -96,14 +113,14 @@
                                padding-top: 5px;
                                margin-left: 10px;
                                font-weight: bold;">
-                    {{ habit.streak }}
+                    {{ habit_streak }}
                   </span>
                 </td>
                 <td style="vertical-align: middle;">
                   <span class="label label--small"
                         style="display: inline;
                         padding-left: 10px;">
-                    {{ habit.skipped_percentage }}%
+                    {{ habit_skipped_percentage }}%
                   </span>
                 </td>
             </tr>

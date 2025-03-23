@@ -5,6 +5,27 @@ require 'active_support/time'
 require 'uri'
 
 DAYS_COUNT = 7
+TRMNL_PAYLOAD_LIMIT = 2048
+
+
+def map_status(status)
+  case status
+  when 'completed' then 'c'
+  when 'failed' then 'f'
+  when 'skipped' then 's'
+  when 'in_progress' then 'p'
+  when 'none' then 'n'
+  else
+    'n'
+  end
+end
+
+SKIPPED_PERCENTAGE = :sp
+IS_NEGATIVE = :v
+SKIPPED = :k
+STREAK = :t
+STATUSES = :s
+NAME = :n
 
 ###### methods #############
 
@@ -73,15 +94,15 @@ def get_progress(habit_status_response)
   current_progress = progress["current_value"]
   target_progress = progress["target_value"]
 
-  return -1, current_progress if target_progress.nil? || target_progress == 0
+  return -1, current_progress.round(1) if target_progress.nil? || target_progress == 0
 
-  return (current_progress.to_f / target_progress.to_f * 100).round(1), current_progress
+  return (current_progress.to_f / target_progress.to_f * 100).round(1), current_progress.round(1)
 end
 
 #for the given habit_id finds statuses in range @start_date..@end_date
 # and counts current streak (event before @start_date)
 def get_habit_history_and_streak(habit_id, habit_start_date, habit)
-  result = {:streak => 0, :skipped => 0}
+  result = {STREAK => 0, SKIPPED => 0}
   on_streak = true
   current_date = @end_date
   is_for_today = true
@@ -97,7 +118,7 @@ def get_habit_history_and_streak(habit_id, habit_start_date, habit)
       habit_status_response = call_habitify("/status/#{habit_id}", { target_date: current_date.iso8601}, !is_for_today)
       status = habit_status_response["data"]["status"]
 
-      if habit[:is_negative] && status == 'in_progress' && !is_for_today
+      if habit[IS_NEGATIVE] && status == 'in_progress' && !is_for_today
         status = 'completed'
       end
 
@@ -108,31 +129,31 @@ def get_habit_history_and_streak(habit_id, habit_start_date, habit)
 
     #don't store more statuses than needed
     if current_date >= @start_date
-      statuses[current_date.strftime("%Y-%m-%d")] = {status: status, progress: progress, value: value}
+      statuses[current_date.strftime("%Y-%m-%d")] = [map_status(status), progress, value]
     end
 
     #streak counting algorithm
     if status == 'failed' or status == 'none'
       on_streak = false
     elsif status == 'skipped'
-      result[:skipped] += 1 if on_streak
+      result[SKIPPED] += 1 if on_streak
     elsif is_for_today and status == 'in_progress'
       #nop - don't break a streak, but also don't count ;)
-      result[:streak] += 0
+      result[STREAK] += 0
     elsif on_streak
-      result[:streak] += 1
+      result[STREAK] += 1
     end
 
     current_date = current_date.yesterday
   end
 
-  if result[:streak] > 0
-    result[:skipped_percentage] = short_round(result[:skipped] / result[:streak].to_f * 100)
+  if result[STREAK] > 0
+    result[SKIPPED_PERCENTAGE] = short_round(result[SKIPPED] / result[STREAK].to_f * 100)
   else
-    result[:skipped_percentage] = 0
+    result[SKIPPED_PERCENTAGE] = 0
   end
   #order statuses from oldest to newest
-  result[:statuses] = statuses.values.reverse
+  result[STATUSES] = statuses.values.reverse
 
   result
 end
@@ -142,7 +163,7 @@ def extract_name_and_type(habit_response)
   # A feature request has been submitted: https://feedback.habitify.me/en/p/add-positivenegative-habit-classification-to-api
   # In the meantime, using a workaround:
   orig_name = habit_response["name"]
-  {name: orig_name.sub(/^❌/, '').strip, is_negative: orig_name.start_with?("❌")}
+  {NAME => orig_name.sub(/^❌/, '').strip, IS_NEGATIVE => orig_name.start_with?("❌")}
 end
 
 #returns all user habits with its streak days count and history for DAYS_COUNT days
@@ -166,7 +187,7 @@ def get_habits_data
     habits.append habit
   end
 
-  habits.sort_by! {|habit| [habit[:is_negative] ? 1 : 0, habit[:streak]]}
+  habits.sort_by! {|habit| [habit[IS_NEGATIVE] ? 1 : 0, habit[STREAK]]}
 
   #pupulate table header
   header = []
@@ -183,6 +204,7 @@ rescue StandardError => e
   raise
 end
 
+
 def send_to_trmnl(data_payload)
   trmnl_webhook_url = "https://usetrmnl.com/api/custom_plugins/#{ENV['TRMNL_PLUGIN_ID']}"
 
@@ -197,7 +219,17 @@ def send_to_trmnl(data_payload)
   }
 
   request = Net::HTTP::Post.new(uri.path, headers)
-  request.body = {merge_variables: data_payload}.to_json
+
+
+  body = { merge_variables: data_payload }.to_json
+
+  if body.bytesize > TRMNL_PAYLOAD_LIMIT
+    raise "Request body is too large (#{body.bytesize} bytes, limit: #{TRMNL_PAYLOAD_LIMIT} bytes)"
+  else
+    puts "Request body size: (#{body.bytesize} bytes)"
+  end
+
+  request.body = body
 
   response = http.request(request)
 
